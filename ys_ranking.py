@@ -17,7 +17,7 @@ from time import sleep
 from api import ys_api
 from exl import exl_wb
 
-SEL_USE = True
+SEL_USE = False
 
 # 日時の取得
 fd_date = datetime.now().strftime('%Y%m%d')
