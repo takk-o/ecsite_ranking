@@ -3,9 +3,11 @@
 # （ページの構成により、レビュー数／アベレージがズレるケース有り）
 # Selenium利用により上位30位に拡張可（要コード調整）
 
+from datetime import datetime
+from pathlib import Path
+import sys
 import requests
 from bs4 import BeautifulSoup
-from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -16,16 +18,27 @@ from exl import exl_wb
 
 SEL_USE = False
 
-# 入力されたカテゴリーIDに従属するID全てをリスト化
+# 日時の取得
+fd_date = datetime.now().strftime('%Y%m%d')
+fd_time = datetime.now().strftime("%H%M%S")
+# 親ディレクトリパスの取得
+fd_path = Path(sys.argv[0]).parent
+# Excelファイル準備
+wb = exl_wb(fd_path.joinpath(fd_date), f'Ranking_{fd_time}.xlsx')
+ws = wb.read_workbook(fd_path, 'Base.xlsx')
+# カテゴリーコード取得
+id = ws['D2'].value
+
+# 取得したカテゴリーIDに従属するID全てをリスト化
 ys = ys_api()
 
-while True:
-    try:
-        id = input('カテゴリーID: ')
-        break
-    except ValueError:
-        pass
-ids = [id]
+# while True:
+#     try:
+#         id = input('カテゴリーID: ')
+#         break
+#     except ValueError:
+#         pass
+ids = [int(id)]
 ys.out_ids = []
 ys.list_get_ids(ids)
 codes = ys.out_ids
@@ -39,13 +52,6 @@ if SEL_USE:
     options.add_argument('--window-size=3200,1800') 
     options.add_argument('--user-data-dir=/Users/ynurmj5e/Library/Application Support/Google/Chrome/Default')
     driver = webdriver.Chrome(options=options)
-
-# Excelファイル出力準備
-wb = exl_wb('output', 'SpreadSheet.xlsx')
-if SEL_USE:
-    wb.open_workbook(30)
-else:
-    wb.open_workbook()
 
 # メイン処理
 for code in codes:
@@ -84,8 +90,8 @@ for code in codes:
 
     # Excel操作
     ws = wb.copy_ws()
-    ws.title = code
-    ws['C2'].hyperlink = url
+    ws.title = str(code)
+    ws['D2'] = int(code)
 
     # パンくずリスト登録
     for j in range(len(l_cat)):

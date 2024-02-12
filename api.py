@@ -26,16 +26,16 @@ class ys_api:
         try:
             results = requests.get(YahooCategorySearchURL, params)
             results.raise_for_status()
-        except ConnectionError as ce:
+        except ConnectionError as ce:           # 接続エラー
             print("Connection Error:", ce)
             return []
-        except HTTPError as he:
+        except HTTPError as he:                 # HTTPステータスエラー
             print("HTTP Error:", he)
             return []
-        except Timeout as te:
+        except Timeout as te:                   # タイムアウト
             print("Timeout Error:", te)
             return []
-        except RequestException as re:
+        except RequestException as re:          # その他エラー
             print("Error:", re)
             return []
         results = results.json()
@@ -128,16 +128,16 @@ class rt_api:
         try:
             results = requests.get(RakutenGenreSearchURL, params)
             results.raise_for_status()
-        except ConnectionError as ce:
+        except ConnectionError as ce:           # 接続エラー
             print("Connection Error:", ce)
             return []
-        except HTTPError as he:
+        except HTTPError as he:                 # HTTPステータスエラー
             print("HTTP Error:", he)
             return []
-        except Timeout as te:
+        except Timeout as te:                   # タイムアウト
             print("Timeout Error:", te)
             return []
-        except RequestException as re:
+        except RequestException as re:          # その他エラー
             print("Error:", re)
             return []
         results = results.json()
@@ -160,16 +160,16 @@ class rt_api:
         try:
             results = requests.get(RakutenGenreSearchURL, params)
             results.raise_for_status()
-        except ConnectionError as ce:
+        except ConnectionError as ce:           # 接続エラー
             print("Connection Error:", ce)
             return []
-        except HTTPError as he:
+        except HTTPError as he:                 # HTTPステータスエラー
             print("HTTP Error:", he)
             return []
-        except Timeout as te:
+        except Timeout as te:                   # タイムアウト
             print("Timeout Error:", te)
             return []
-        except RequestException as re:
+        except RequestException as re:          # その他エラー
             print("Error:", re)
             return []
         results = results.json()['Items']

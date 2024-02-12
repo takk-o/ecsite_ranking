@@ -1,31 +1,40 @@
 # 楽天市場のジャンルID指定により、その配下のジャンルについて、
 # 上位30位ランキングデータを取得してExcelに登録する。
 
-import requests
-from bs4 import BeautifulSoup
+from datetime import datetime
+from pathlib import Path
+import sys
 from time import sleep
-from pprint import pprint
 
 from api import rt_api
 from exl import exl_wb
 
-# 入力されたジャンルIDに従属するID全てをリスト化
+# 日時の取得
+fd_date = datetime.now().strftime('%Y%m%d')
+fd_time = datetime.now().strftime("%H%M%S")
+# 親ディレクトリパスの取得
+fd_path = Path(sys.argv[0]).parent
+# Excelファイル準備
+wb = exl_wb(fd_path.joinpath(fd_date), f'Ranking_{fd_time}.xlsx')
+ws = wb.read_workbook(fd_path, 'Base.xlsx')
+# カテゴリーコード取得
+id = ws['D2'].value
+
+# 取得したジャンルIDに従属するID全てをリスト化
 rt = rt_api()
 
-while True:
-    try:
-        id = input('ジャンルID: ')
-        break
-    except ValueError:
-        pass
+# while True:
+#     try:
+#         id = input('ジャンルID: ')
+#         break
+#     except ValueError:
+#         pass
 ids = [int(id)]
 rt.out_ids = []
 rt.list_get_ids(ids)
 codes = rt.out_ids
 
-# Excelファイル出力準備
-wb = exl_wb('output', 'SpreadSheet.xlsx')
-wb.open_workbook(30)
+del rt
 
 # メイン処理
 for code in codes:
@@ -52,7 +61,7 @@ for code in codes:
     # Excel操作
     ws = wb.copy_ws()
     ws.title = str(code)
-    ws['B2'] = ""
+    ws['D2'] = int(id)
     ws['B6'] = "トップ"
     
     # # パンくずリスト登録
@@ -71,9 +80,6 @@ for code in codes:
         ws.cell(row=i + 9, column=5, value=int(prices[i].replace(',', '')))
         ws.cell(row=i + 9, column=6, value=names[i])
         ws.cell(row=i + 9, column=7).hyperlink = images[0]['imageUrl']
-        # ws.cell(row=i + 9, column=8).value = f'=_xlfn.image(G{i + 9})'
 
 # # Excel終了
 wb.save_workbook()
-
-del rt
