@@ -17,7 +17,7 @@ from time import sleep
 from api import ys_api
 from exl import exl_wb
 
-SEL_USE = False
+SEL_USE = True
 
 # 日時の取得
 fd_date = datetime.now().strftime('%Y%m%d')
@@ -67,7 +67,7 @@ for code in codes:
         try:
             driver.get(url)
             sleep(1)
-            driver.execute_script("window.scrollTo(0, 2500);")      # 「もっと見る」ボタンが表示されるまでスクロール
+            driver.execute_script("window.scrollTo(0, 3000);")      # 「もっと見る」ボタンが表示されるまでスクロール
             sleep(1)
             driver.execute_script('arguments[0].click();', driver.find_element(By.CLASS_NAME, "button-text"))
             sleep(1)
@@ -85,12 +85,97 @@ for code in codes:
         l_cat.append(category.text)
 
     # ランキング情報取得
-    ranks = page.find_all('span', class_ = 'rank-text')
-    reviews = page.find_all('span', class_ = 'Review__count____2_0_101 Review__count--hasBrackets____2_0_101 review-count')
-    averages = page.find_all('span', class_ = 'Review__average____2_0_101 review-average')
-    prices = page.find_all('span', class_ = 'price-number')
-    names = page.find_all('span', class_ = 'name-text')
-    images = page.find_all('img', class_ = 'image')
+    # ranks = page.find_all('span', class_ = 'rank-text')
+    # reviews = page.find_all('span', class_ = 'Review__count____2_0_101 Review__count--hasBrackets____2_0_101 review-count')
+    # averages = page.find_all('span', class_ = 'Review__average____2_0_101 review-average')
+    # prices = page.find_all('span', class_ = 'price-number')
+    # names = page.find_all('span', class_ = 'name-text')
+    # images = page.find_all('img', class_ = 'image')
+
+    ranks, reviews, averages, prices, names, images = [], [], [], [], [], []
+    if SEL_USE:
+        num = 30
+    else:
+        num = 10
+    space = page.new_tag('span')
+    space.string = ''
+    zero = page.new_tag('span')
+    zero.string ='0'
+    for i in range(num):
+        if i <= 10:
+            selector = f'div > div > div:nth-child(1) > ul > li > div > div:nth-child({i + 1}) > div > div > div.column-left > div > span.rank-text'
+            element = page.select_one(selector=selector)
+            if element:
+                ranks.append(element)
+            else:
+                ranks.append(zero)
+            selector = f'div > div > div:nth-child(1) > ul > li > div > div:nth-child({i + 1}) > div > div > div.column-middle-right > a > span > span.Review__count____2_0_101.Review__count--hasBrackets____2_0_101.review-count'
+            element = page.select_one(selector=selector)
+            if element:
+                reviews.append(element)
+            else:
+                reviews.append(space)
+            selector = f'div > div > div:nth-child(1) > ul > li > div > div:nth-child({i + 1}) > div > div > div.column-middle-right > a > span > span.Review__average____2_0_101.review-average'
+            element = page.select_one(selector=selector)
+            if element:
+                averages.append(element)
+            else:
+                averages.append(zero)
+            selector = f'div > div > div:nth-child(1) > ul > li > div > div:nth-child({i + 1}) > div > div > div.column-middle > div > p > span.price-number'
+            element = page.select_one(selector=selector)
+            if element:
+                prices.append(element)
+            else:
+                prices.append(zero)
+            selector = f'div > div > div:nth-child(1) > ul > li > div > div:nth-child({i + 1}) > div > div > div.column-middle > p > a > span'
+            element = page.select_one(selector=selector)
+            if element:
+                names.append(element)
+            else:
+                names.append(space)
+            selector = f'div > div > div:nth-child(1) > ul > li > div > div:nth-child({i + 1}) > div > div > div.column-middle-left > a > img'
+            element = page.select_one(selector=selector)
+            if element:
+                images.append(element)
+            else:
+                images.append(space)
+        else:
+            selector = f'div > div > div > ul > li > div > div:nth-child({i - 9}) > div > div > div.column-left > div > span.rank-text'
+            element = page.select_one(selector=selector)
+            if element:
+                ranks.append(element)
+            else:
+                ranks.append(zero)
+            selector = f'div > div > div > ul > li > div > div:nth-child({i - 9}) > div > div > div.column-middle-right > a > span > span.Review__count____2_0_101.Review__count--hasBrackets____2_0_101.review-count'
+            element = page.select_one(selector=selector)
+            if element:
+                reviews.append(element)
+            else:
+                reviews.append(space)
+            selector = f'div > div > div > ul > li > div > div:nth-child({i - 9}) > div > div > div.column-middle-right > a > span > span.Review__average____2_0_101.review-average'
+            element = page.select_one(selector=selector)
+            if element:
+                averages.append(element)
+            else:
+                averages.append(zero)
+            selector = f'div > div > div > ul > li > div > div:nth-child({i - 9}) > div > div > div.column-middle > div.price > p > span.price-number'
+            element = page.select_one(selector=selector)
+            if element:
+                prices.append(element)
+            else:
+                prices.append(zero)
+            selector = f'div > div > div > ul > li > div > div:nth-child({i - 9}) > div > div > div.column-middle > p > a > span'
+            element = page.select_one(selector=selector)
+            if element:
+                names.append(element)
+            else:
+                names.append(space)
+            selector = f'div > div > div > ul > li > div > div:nth-child({i - 9}) > div > div > div.column-middle-left > a > img'
+            element = page.select_one(selector=selector)
+            if element:
+                images.append(element)
+            else:
+                images.append(space)           
 
     # Excel操作
     ws = wb.copy_ws()

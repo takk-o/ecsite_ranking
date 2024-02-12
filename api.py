@@ -70,10 +70,8 @@ class rt_api:
     def __init__(self):
         self.out_ids = []
 
-    # 引数に指定したジャンルIDの子要素を返す
-    def get_child_ids(self, id):
-        # Rakuten API ジャンルID取得
-
+    def genre_search(self, id):
+        # Rakuten ジャンル検索API
         # applicationId（必須） string      アプリID
         # output               json        レスポンス形式                   json : json形式
         # genreId	           integer     ジャンルID                      category_id = 1 : ルートカテゴリ(第1階層)
@@ -99,9 +97,12 @@ class rt_api:
         except RequestException as re:          # その他エラー
             print("Error:", re)
             return []
-        results = results.json()
+        return results.json()
 
-        #　指定ジャンルIDの子要素を取得
+    # 引数に指定したジャンルIDの子要素IDを返す
+    def get_child_ids(self, id):
+        results = self.genre_search(id)
+
         child_ids = []
         for child in results['children']:
             child_ids.append(child['child']['genreId'])
@@ -116,43 +117,27 @@ class rt_api:
             if work_ids != []:
                 self.list_get_ids(work_ids)
 
-    # 引数に指定したジャンルIDの親要素を返す
+    # 引数に指定したジャンルIDの親要素名を返す
     def get_parent_names(self, id):
+        results = self.genre_search(id)
 
-        RakutenGenreSearchURL = 'https://app.rakuten.co.jp/services/api/IchibaGenre/Search/20140222'
-        params = {}
-        params['applicationId'] = '1009444523111624250'
-        params['format'] = 'json'
-        params['genreId'] = id
-
-        try:
-            results = requests.get(RakutenGenreSearchURL, params)
-            results.raise_for_status()
-        except ConnectionError as ce:           # 接続エラー
-            print("Connection Error:", ce)
-            return []
-        except HTTPError as he:                 # HTTPステータスエラー
-            print("HTTP Error:", he)
-            return []
-        except Timeout as te:                   # タイムアウト
-            print("Timeout Error:", te)
-            return []
-        except RequestException as re:          # その他エラー
-            print("Error:", re)
-            return []
-        results = results.json()
-
-        #　指定カテゴリーIDの子要素を取得
         parent_names = []
         for parent in results['parents']:
             parent_names.append(parent['parent']['genreName'])
         return parent_names
-    
+
+    # 引数に指定したジャンルIDの名前を返す
+    def get_current_name(self, id):
+        results = self.genre_search(id)
+
+        current_name = results['current']['genreName']
+        return current_name
+
     def get_ranking(self, id):
         
         RakutenGenreSearchURL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Ranking/20220601'
         params = {}
-        params['applicationId'] = '1009444523111624250'
+        params['applicationId'] = settings.rt_app_id
         params['elements'] = 'rank,reviewCount,reviewAverage,itemPrice,itemName,smallImageUrls'
         params['format'] = 'json'
         params['genreId'] = id

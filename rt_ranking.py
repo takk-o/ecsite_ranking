@@ -39,6 +39,7 @@ for code in codes:
 
     # パンくずリスト取得
     l_cat = rt.get_parent_names(code)
+    l_cat.append(rt.get_current_name(code))
 
     # ランキング情報取得
     ranks = []

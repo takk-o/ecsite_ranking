@@ -24,6 +24,11 @@ Selenium利用(SEL_USE=True)により上位30位に拡張可（動作環境に�
 1. ys_base10.xlsxの「カテゴリーコード」に確認したいカテゴリーコードを登録("D2"セル)
 1. ys_ranking.pyを起動
 1. [当日日付]フォルダに、Ranking_[時刻].xlsxファイルが作成される
+### ys_ranking.py(Selenium利用)
+1. ys_base30.xlsxの「カテゴリーコード」に確認したいカテゴリーコードを登録("D2"セル)
+1. ys_ranking.pyの SEL_USE = True に変更 
+1. ys_ranking.pyを起動
+1. [当日日付]フォルダに、Ranking_[時刻].xlsxファイルが作成される
 
 ## Author
 - takk-o
