@@ -16,7 +16,7 @@ fd_time = datetime.now().strftime("%H%M%S")
 fd_path = Path(sys.argv[0]).parent
 # Excelファイル準備
 wb = exl_wb(fd_path.joinpath(fd_date), f'Ranking_{fd_time}.xlsx')
-ws = wb.read_workbook(fd_path, 'Base.xlsx')
+ws = wb.read_workbook(fd_path, 'rt_base.xlsx')
 # カテゴリーコード取得
 id = ws['D2'].value
 
@@ -33,8 +33,6 @@ ids = [int(id)]
 rt.out_ids = []
 rt.list_get_ids(ids)
 codes = rt.out_ids
-
-del rt
 
 # メイン処理
 for code in codes:
@@ -80,6 +78,8 @@ for code in codes:
         ws.cell(row=i + 9, column=5, value=int(prices[i].replace(',', '')))
         ws.cell(row=i + 9, column=6, value=names[i])
         ws.cell(row=i + 9, column=7).hyperlink = images[0]['imageUrl']
+
+del rt
 
 # # Excel終了
 wb.save_workbook()

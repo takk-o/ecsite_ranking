@@ -1,7 +1,8 @@
 # YAHOO!ショッピングのカテゴリーID指定により、その配下のカテゴリーについて、
 # 上位10位ランキングデータを取得してExcelに登録する。
 # （ページの構成により、レビュー数／アベレージがズレるケース有り）
-# Selenium利用により上位30位に拡張可（要コード調整）
+# Selenium利用(SEL_USE=True)により上位30位に拡張可
+# （動作環境により、sleep時間や、解像度の調整が必要）
 
 from datetime import datetime
 from pathlib import Path
@@ -25,7 +26,10 @@ fd_time = datetime.now().strftime("%H%M%S")
 fd_path = Path(sys.argv[0]).parent
 # Excelファイル準備
 wb = exl_wb(fd_path.joinpath(fd_date), f'Ranking_{fd_time}.xlsx')
-ws = wb.read_workbook(fd_path, 'Base.xlsx')
+if SEL_USE:
+    ws = wb.read_workbook(fd_path, 'ys_base30.xlsx')
+else:
+    ws = wb.read_workbook(fd_path, 'ys_base10.xlsx')
 # カテゴリーコード取得
 id = ws['D2'].value
 
