@@ -4,6 +4,24 @@ from requests.exceptions import RequestException, ConnectionError, HTTPError, Ti
 
 import settings
 
+def get_results(url, params):
+    try:
+        results = requests.get(url, params)
+        results.raise_for_status()
+    except ConnectionError as ce:           # 接続エラー
+        print("Connection Error:", ce)
+        return []
+    except HTTPError as he:                 # HTTPステータスエラー
+        print("HTTP Error:", he)
+        return []
+    except Timeout as te:                   # タイムアウト
+        print("Timeout Error:", te)
+        return []
+    except RequestException as re:          # その他エラー
+        print("Error:", re)
+        return []
+    return results.json()
+
 class ys_api:
 
     # 出力カテゴリーIDリスト
@@ -23,22 +41,8 @@ class ys_api:
         params['appid'] = settings.ys_app_id
         params['output'] = 'json'
         params['category_id'] = id
-        try:
-            results = requests.get(YahooCategorySearchURL, params)
-            results.raise_for_status()
-        except ConnectionError as ce:           # 接続エラー
-            print("Connection Error:", ce)
-            return []
-        except HTTPError as he:                 # HTTPステータスエラー
-            print("HTTP Error:", he)
-            return []
-        except Timeout as te:                   # タイムアウト
-            print("Timeout Error:", te)
-            return []
-        except RequestException as re:          # その他エラー
-            print("Error:", re)
-            return []
-        results = results.json()
+
+        results = get_results(YahooCategorySearchURL, params)
 
         #　指定カテゴリーIDの子要素を取得
         child_elements = results['ResultSet']['0']['Result']['Categories']['Children']
@@ -82,22 +86,7 @@ class rt_api:
         params['format'] = 'json'
         params['genreId'] = id
 
-        try:
-            results = requests.get(RakutenGenreSearchURL, params)
-            results.raise_for_status()
-        except ConnectionError as ce:           # 接続エラー
-            print("Connection Error:", ce)
-            return []
-        except HTTPError as he:                 # HTTPステータスエラー
-            print("HTTP Error:", he)
-            return []
-        except Timeout as te:                   # タイムアウト
-            print("Timeout Error:", te)
-            return []
-        except RequestException as re:          # その他エラー
-            print("Error:", re)
-            return []
-        return results.json()
+        return get_results(RakutenGenreSearchURL, params)
 
     # 引数に指定したジャンルIDの子要素IDを返す
     def get_child_ids(self, id):
@@ -142,21 +131,6 @@ class rt_api:
         params['format'] = 'json'
         params['genreId'] = id
 
-        try:
-            results = requests.get(RakutenGenreSearchURL, params)
-            results.raise_for_status()
-        except ConnectionError as ce:           # 接続エラー
-            print("Connection Error:", ce)
-            return []
-        except HTTPError as he:                 # HTTPステータスエラー
-            print("HTTP Error:", he)
-            return []
-        except Timeout as te:                   # タイムアウト
-            print("Timeout Error:", te)
-            return []
-        except RequestException as re:          # その他エラー
-            print("Error:", re)
-            return []
-        results = results.json()['Items']
+        results = get_results(RakutenGenreSearchURL, params)['Items']
 
         return results
