@@ -8,12 +8,12 @@ YAHOO!ショッピングのカテゴリーID指定により、その配下のカ
 Selenium利用(SEL_USE=True)により上位30位に拡張可（動作環境により、sleep時間や、解像度の調整が必要）
 
 ## Requirements
-- Python 3.11.7
-- requests 2.31.0
+- Python 3.12.3
+- requests 2.32.2
 - openpyxl 3.1.2
 - python-dotenv 1.0.1
 - bs4 0.0.2
-- selenium 4.17.2
+- selenium 4.21.0
 
 ## Usage
 ### rt_ranking.py
